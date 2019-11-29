@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: storage-volume-by-nfs
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 5Gi
+  nfs:
+    # On microk8s test environment, dns service name is not available during container creation phase
+    # I assume this is a limitation of microk8s and should not be the case for other k8s environment
+    # like GKE or DigitalOcean K8s
+    # Related issues:
+    # - https://github.com/kubernetes/minikube/issues/2218
+    # - https://github.com/kubernetes/minikube/issues/3417
+
+    # alternatively uses dns service name
+    # server: nfs-server-svc.namespace.svc.cluster.local
+    server: 10.152.183.177
+    path: "/exports"
+    readOnly: false

@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx:1.16-alpine
+        name: nginx
+        volumeMounts:
+          - mountPath: /usr/share/nginx/html
+            name: storage
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: storage-rwx
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: storage-rwx
+spec:
+  storageClassName: ""
+  volumeName: storage-volume-by-nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
